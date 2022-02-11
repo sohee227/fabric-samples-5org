@@ -1,0 +1,39 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '3.7'
+
+networks:
+    # sandbox_swarm:
+    #   external: true
+    # fabric_swarm:
+    #     external: true
+    test:
+        name: fabric_test
+
+services:
+
+  bc-rest.medidid.com:
+    image: honeyblock/fabric-ipfs-rest:test
+    labels:
+      service: hyperledger-fabric
+    container_name: bc-rest.medidid.com
+    environment:
+      - ENV=cloud
+      - SSL=medidid
+      - MSPID=org1.example.com
+      - VIRTUAL_HOST=bc-rest.medidid.com
+    ports:
+      - "4000:4000"
+    command: /bin/sh -c "npm start"
+    volumes:
+      - ../organizations:/opt/gopath/src/github.com/hyperledger/fabric-samples-5org/test-network/organizations
+      - ../organizations/peerOrganizations/org1.example.com/network.json:/app/network.json
+      - /data/ipfs-cluster/files:/data/ipfs-cluster/files
+    #   - /opt/gopath/src/github.com/honeybee/sandbox-multi-cloud-dev/test/bdd/fixtures/keys/tls:/opt/gopath/src/github.com/honeybee/sandbox-multi-cloud-dev/test/bdd/fixtures/keys/tls
+    networks:
+    #   - sandbox_swarm
+      # - fabric_swarm
+      - test
